@@ -11,6 +11,7 @@ export interface CharacterBase {
   nationality: string;
   appearance_year: number;
   iconic_phrase: string;
+  image_url: string | null;
 }
 
 interface GuessFeedback {
@@ -152,7 +153,8 @@ const handleGuess = async (characterId: number) => {
 
   <div className="w-full max-w-3xl mt-4">
         
-          <div className="grid grid-cols-5 gap-2 text-center text-xs sm:text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">
+          <div className="grid grid-cols-6 gap-2 text-center text-xs sm:text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">
+            <div>ícono</div>
             <div>Personaje</div>
             <div>Nombre</div>
             <div>Género</div>
@@ -166,7 +168,8 @@ const handleGuess = async (characterId: number) => {
 
               if (!guess) {
                 return (
-                  <div key={index} className="grid grid-cols-5 gap-2 h-16">
+                  <div key={index} className="grid grid-cols-6 gap-2 h-16">
+                    <div className="bg-gray-900 border-2 border-gray-800 rounded"></div>
                     <div className="bg-gray-900 border-2 border-gray-800 rounded"></div>
                     <div className="bg-gray-900 border-2 border-gray-800 rounded"></div>
                     <div className="bg-gray-900 border-2 border-gray-800 rounded"></div>
@@ -178,11 +181,28 @@ const handleGuess = async (characterId: number) => {
 
               const { isCorrect, characterData, comparision } = guess;
 
-              const isLatestGuess = index === guesses.length - 1;
+              const isLatestGuess = index === 0;
 
               return (
-                <div key={index} className="grid grid-cols-5 gap-2 h-16 text-xs sm:text-sm md:text-base text-center font-bold shadow-lg">
+                <div key={`guess-${characterData.id}`} className="grid grid-cols-6 gap-2 h-16 text-xs sm:text-sm md:text-base text-center font-bold shadow-lg">
                   
+
+                    <div 
+                    className={`flex items-center justify-center border-2 rounded overflow-hidden bg-gray-800 border-gray-700
+                      ${isLatestGuess ? 'animate-flip-seq' : ''}`}
+                    style={isLatestGuess ? { animationDelay: '0ms' } : {}}
+                  >
+                    {characterData.image_url ? (
+                      <img 
+                        src={characterData.image_url} 
+                        alt={characterData.nickname} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-600">?</span>
+                    )}
+                  </div>
+
                   <div className={`flex items-center justify-center border-2 rounded p-1 
                     ${isCorrect ? 'bg-green-600 border-green-500 text-white' : 'bg-gray-800 border-gray-700 text-gray-300'}
                     ${isLatestGuess ? 'animate-flip-seq' : ''}`}
@@ -219,13 +239,13 @@ const handleGuess = async (characterId: number) => {
                     style={isLatestGuess ? { animationDelay: '1200ms'} : {}}>
                     <span>{characterData.appearance_year}</span>
                     
-                    <div 
+               <div 
                     className={`flex items-center justify-center border-2 rounded p-1 
                       ${isCorrect || comparision?.appearance_year === 'match' ? 'bg-green-600 border-green-500 text-white' : 'bg-red-600 border-red-500 text-white'}
                       ${isLatestGuess ? 'animate-flip-seq' : ''}`}
-                    style={isLatestGuess ? { animationDelay: '1200ms' } : {}}
+                    style={isLatestGuess ? { animationDelay: '1000ms' } : {}}
                   >
-                    <span>{characterData.appearance_year}</span>
+                    {characterData.appearance_year}
                     {!isCorrect && comparision?.appearance_year === 'higher' && <span className="ml-1 text-lg">↑</span>}
                     {!isCorrect && comparision?.appearance_year === 'lower' && <span className="ml-1 text-lg">↓</span>}
                   </div>

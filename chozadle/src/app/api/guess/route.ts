@@ -35,6 +35,7 @@ export async function POST(request: Request){
             isCorrect: false,
             characterData: guessedCharacter,
             comparision: {
+                first_name: guessedCharacter.first_name === dailyCharacter.first_name ? 'match' : 'miss',
                 gender: guessedCharacter.gender === dailyCharacter.gender ? 'match' : 'miss',
                 nationality: guessedCharacter.nationality === dailyCharacter.nationality ? 'match' : 'miss',
                 appearance_year:

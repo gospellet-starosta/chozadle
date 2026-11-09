@@ -150,8 +150,7 @@ const handleGuess = async (characterId: number) => {
         )}
 
   <div className="w-full max-w-3xl mt-4">
-          
-          {/* Encabezados de las columnas */}
+        
           <div className="grid grid-cols-4 gap-2 text-center text-xs sm:text-sm font-bold text-gray-500 uppercase tracking-wide mb-2">
             <div>Personaje</div>
             <div>Género</div>
@@ -159,12 +158,10 @@ const handleGuess = async (characterId: number) => {
             <div>Año</div>
           </div>
 
-          {/* Cuadrícula de 5 filas fijas */}
           <div className="flex flex-col gap-2">
             {Array.from({ length: 5 }).map((_, index) => {
               const guess = guesses[index];
 
-              // Si no hay un intento en este índice, mostramos una fila vacía con fondo oscuro
               if (!guess) {
                 return (
                   <div key={index} className="grid grid-cols-4 gap-2 h-16">

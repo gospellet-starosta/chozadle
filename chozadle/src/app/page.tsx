@@ -54,6 +54,34 @@ export default function GameBoard() {
     fetchCharacters();
   }, []);
 
+  useEffect(() => {
+    const today = new Date().toDateString();
+    const savedDate = localStorage.getItem('chozadle_date');
+
+    if ((savedDate === today )) {
+      const savedGuesses = localStorage.getItem('chozadle_guesses');
+      const savedStatus = localStorage.getItem('chozadle_status');
+      const savedPhrase = localStorage.getItem('chozadle_phrase');
+
+      if (savedGuesses) setGuesses(JSON.parse(savedGuesses));
+      if (savedStatus) setGameStatus(savedStatus as 'playing' | 'won' | 'lost');
+      if (savedPhrase) setIconicPhrase(savedPhrase);
+    } else {
+      localStorage.removeItem('chozadle_guesses')
+      localStorage.removeItem('chozadle_status')
+      localStorage.removeItem('chozadle_phrase')
+      localStorage.setItem('chozadle_date', today);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (guesses.length > 0) {
+      localStorage.setItem('chozadle_guesses', JSON.stringify(guesses));
+      localStorage.setItem('chozadle_status', gameStatus);
+      if (iconicPhrase) localStorage.setItem('chozadle_phrase', iconicPhrase);
+    }
+});
+
 const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 const query = e.target.value;
 setSearchQuery(query);

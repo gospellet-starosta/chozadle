@@ -133,8 +133,12 @@ const handleGuess = async (characterId: number) => {
     <main className="min-h-screen bg-black text-white flex flex-col items-center py-12 px-4 font-sans">
       <div className="w-full max-w-3xl flex flex-col items-center gap-8">
         
-        <header className="text-center">
-          <h1 className="text-4xl font-bold tracking-wider mb-2">CHOZADLE</h1>
+      <header className="text-center flex flex-col items-center">
+          <img 
+            src="/logo.png" 
+            alt="Chozadle Logo" 
+            className="w-64 h-auto object-contain mb-4"
+          />
           <p className="text-gray-400">Adivina el personaje misterioso. Intentos: {guesses.length} / 5</p>
         </header>
 

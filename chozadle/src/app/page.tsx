@@ -17,6 +17,7 @@ export interface CharacterBase {
 interface GuessFeedback {
   isCorrect: boolean;
   characterData: CharacterBase;
+  hint?: string;
   comparision?:{
     first_name: 'match' | 'miss';
     gender: 'match' | 'miss';
@@ -53,6 +54,8 @@ export default function GameBoard() {
 
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
+  const [showHint, setShowHint] = useState(false);
+
   useEffect(() => {
     const fetchCharacters = async () => {
       const { data, error } = await supabase
@@ -79,10 +82,12 @@ export default function GameBoard() {
       const savedGuesses = localStorage.getItem('chozadle_guesses');
       const savedStatus = localStorage.getItem('chozadle_status');
       const savedPhrase = localStorage.getItem('chozadle_phrase');
+      const savedShowHint = localStorage.getItem('chozadle_showHint');
     
       if (savedGuesses) setGuesses(JSON.parse(savedGuesses));
       if (savedStatus) setGameStatus(savedStatus as 'playing' | 'won' | 'lost');
       if (savedPhrase) setIconicPhrase(savedPhrase);
+      if (savedShowHint === 'true') setShowHint(true);
     } else {
       localStorage.removeItem('chozadle_guesses')
       localStorage.removeItem('chozadle_status')
@@ -95,9 +100,10 @@ export default function GameBoard() {
     if (guesses.length > 0) {
       localStorage.setItem('chozadle_guesses', JSON.stringify(guesses));
       localStorage.setItem('chozadle_status', gameStatus);
+      localStorage.setItem('chozadle_showHint', showHint.toString());
       if (iconicPhrase) localStorage.setItem('chozadle_phrase', iconicPhrase);
     }
-}, [guesses, gameStatus, iconicPhrase]);
+}, [guesses, gameStatus, iconicPhrase, showHint]);
 
 const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 const query = e.target.value;
@@ -167,12 +173,15 @@ const handleGuess = async (characterId: number) => {
     const data = await res.json();
 
     if (res.ok) {
+      if (data.hint) {
+        setIconicPhrase(data.hint);
+      }
+
       const newGuesses = [data, ...guesses];
       setGuesses(newGuesses);
 
       if(data.isCorrect){ 
         setGameStatus('won');
-        if (data.iconic_phrase) setIconicPhrase(data.iconic_phrase);
         updateStats(true);
       } else if (newGuesses.length >= 5) {
         setGameStatus('lost');
@@ -203,6 +212,24 @@ const handleGuess = async (characterId: number) => {
           />
           <p className="text-gray-400">Adivina el personaje misterioso. Intentos: {guesses.length} / 5</p>
         </header>
+
+        {gameStatus === 'playing' && guesses.length >= 3 && !showHint && (
+          <button 
+            onClick={() => setShowHint(true)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md transition-colors"
+          >
+            💡 Obtener pista
+          </button>
+        )}
+
+        {(showHint || gameStatus !== 'playing') && iconicPhrase && (
+          <div className="bg-indigo-900/40 border border-indigo-500/50 text-indigo-100 p-4 rounded-lg text-center w-full shadow-lg">
+            <h3 className="text-xs font-bold uppercase tracking-widest mb-1 text-indigo-400">
+              Pista del personaje
+              </h3>
+            <p className="italic text-lg">"{iconicPhrase}"</p>
+          </div>
+        )}
 
         {gameStatus === 'won' && (
           <div className="bg-green-900/50 border border-green-500 text-green-200 p-4 rounded-lg text-center w-full">

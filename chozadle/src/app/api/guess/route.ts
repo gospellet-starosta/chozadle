@@ -41,7 +41,8 @@ export async function POST(request: Request){
                 appearance_year:
                 guessedCharacter.appearance_year === dailyCharacter.appearance_year ? 'match':
                 guessedCharacter.appearance_year < dailyCharacter.appearance_year ? 'higher' : 'lower',
-            }
+            },
+            hint: dailyCharacter.iconic_phrase
         };
 
         return NextResponse.json(feedback);
